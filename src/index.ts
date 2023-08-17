@@ -13,11 +13,12 @@ dotenv.config();
 
 const client = getXataClient();
 
+/* Create the vector store */
 const table = "docs";
 const embeddings = new OpenAIEmbeddings();
 const vectorStore = new XataVectorSearch(embeddings, { client, table });
 
-// Add documents
+/* Add documents to the vector store */
 const docs = [
   new Document({
     pageContent: "Xata is a Serverless Data platform based on PostgreSQL",
@@ -36,6 +37,7 @@ const ids = await vectorStore.addDocuments(docs);
 // eslint-disable-next-line no-promise-executor-return
 await new Promise((r) => setTimeout(r, 2000));
 
+/* Create the chat memory store */
 const memory = new BufferMemory({
   chatHistory: new XataChatMessageHistory({
     table: "memory",
@@ -57,6 +59,7 @@ const chain = ConversationalRetrievalQAChain.fromLLM(
     memory,
   }
 );
+
 /* Ask it a question */
 const question = "What is Xata?";
 const res = await chain.call({ question });
@@ -70,5 +73,6 @@ const followUpRes = await chain.call({
 console.log("Follow-up question: ", followUpQ);
 console.log(followUpRes);
 
+/* Clear both the vector store and the memory store */
 await vectorStore.delete({ ids });
 await memory.clear();
