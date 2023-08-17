@@ -2,8 +2,10 @@ import * as dotenv from "dotenv";
 import { XataVectorSearch } from "langchain/vectorstores/xata";
 import { OpenAIEmbeddings } from "langchain/embeddings/openai";
 import { Document } from "langchain/document";
-import { VectorDBQAChain } from "langchain/chains";
-import { OpenAI } from "langchain/llms/openai";
+import { ConversationalRetrievalQAChain } from "langchain/chains";
+import { BufferMemory } from "langchain/memory";
+import { XataChatMessageHistory } from "langchain/stores/message/xata";
+import { ChatOpenAI } from "langchain/chat_models/openai";
 
 import { getXataClient } from "./xata.ts";
 
@@ -13,7 +15,7 @@ const client = getXataClient();
 
 const table = "docs";
 const embeddings = new OpenAIEmbeddings();
-const store = new XataVectorSearch(embeddings, { client, table });
+const vectorStore = new XataVectorSearch(embeddings, { client, table });
 
 // Add documents
 const docs = [
@@ -29,18 +31,44 @@ const docs = [
   }),
 ];
 
-const ids = await store.addDocuments(docs);
+const ids = await vectorStore.addDocuments(docs);
 
 // eslint-disable-next-line no-promise-executor-return
 await new Promise((r) => setTimeout(r, 2000));
 
-const model = new OpenAI();
-const chain = VectorDBQAChain.fromLLM(model, store, {
-  k: 1,
-  returnSourceDocuments: true,
+const memory = new BufferMemory({
+  chatHistory: new XataChatMessageHistory({
+    table: "memory",
+    sessionId: new Date().toISOString(), // Or some other unique identifier for the conversation
+    client,
+    createTable: false,
+  }),
+  memoryKey: "chat_history",
 });
-const response = await chain.call({ query: "What is Xata?" });
 
-console.log(JSON.stringify(response, null, 2));
+/* Initialize the LLM to use to answer the question */
+const model = new ChatOpenAI({});
 
-// await store.delete({ ids });
+/* Create the chain */
+const chain = ConversationalRetrievalQAChain.fromLLM(
+  model,
+  vectorStore.asRetriever(),
+  {
+    memory,
+  }
+);
+/* Ask it a question */
+const question = "What is Xata?";
+const res = await chain.call({ question });
+console.log("Question: ", question);
+console.log(res);
+/* Ask it a follow up question */
+const followUpQ = "Can it do vector search?";
+const followUpRes = await chain.call({
+  question: followUpQ,
+});
+console.log("Follow-up question: ", followUpQ);
+console.log(followUpRes);
+
+await vectorStore.delete({ ids });
+await memory.clear();

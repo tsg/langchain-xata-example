@@ -13,10 +13,35 @@
           "vector": {
             "dimension": 1536
           }
+        }
+      ]
+    },
+    {
+      "name": "memory",
+      "columns": [
+        {
+          "name": "sessionId",
+          "type": "string"
         },
         {
-          "name": "a",
-          "type": "int"
+          "name": "type",
+          "type": "string"
+        },
+        {
+          "name": "role",
+          "type": "string"
+        },
+        {
+          "name": "content",
+          "type": "text"
+        },
+        {
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "name": "additionalKwargs",
+          "type": "text"
         }
       ]
     }
