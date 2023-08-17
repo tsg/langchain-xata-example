@@ -1,6 +1,8 @@
 # Langchain.js with Xata example
 
-Boilerplate to get started quickly with the [Langchain Typescript SDK](https://github.com/hwchase17/langchainjs) and [Xata](https://xata.io), based on https://github.com/domeccleston/langchain-ts-starter. 
+Boilerplate to get started quickly with the [Langchain Typescript SDK](https://github.com/hwchase17/langchainjs) and [Xata](https://xata.io), based on [langchain-ts-starter](https://github.com/domeccleston/langchain-ts-starter).
+
+The example code implements a Conversational Questions and Answer chain based on data stored in Xata. The example uses Xata both as a vector store and as a memory store for the chat.
 
 # How to use
 
