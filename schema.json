@@ -1,0 +1,24 @@
+{
+  "tables": [
+    {
+      "name": "docs",
+      "columns": [
+        {
+          "name": "content",
+          "type": "text"
+        },
+        {
+          "name": "embedding",
+          "type": "vector",
+          "vector": {
+            "dimension": 1536
+          }
+        },
+        {
+          "name": "a",
+          "type": "int"
+        }
+      ]
+    }
+  ]
+}

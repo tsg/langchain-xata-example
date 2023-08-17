@@ -27,8 +27,9 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "@xata.io/client": "^0.25.2",
     "dotenv": "^16.0.3",
-    "langchain": "^0.0.39",
+    "langchain": "^0.0.129",
     "tsup": "^6.7.0"
   },
   "devDependencies": {

@@ -1,15 +1,46 @@
 import * as dotenv from "dotenv";
-import { OpenAI } from "langchain";
+import { XataVectorSearch } from "langchain/vectorstores/xata";
+import { OpenAIEmbeddings } from "langchain/embeddings/openai";
+import { Document } from "langchain/document";
+import { VectorDBQAChain } from "langchain/chains";
+import { OpenAI } from "langchain/llms/openai";
+
+import { getXataClient } from "./xata.ts";
 
 dotenv.config();
 
-const model = new OpenAI({
-  modelName: "gpt-3.5-turbo",
-  openAIApiKey: process.env.OPENAI_API_KEY,
+const client = getXataClient();
+
+const table = "docs";
+const embeddings = new OpenAIEmbeddings();
+const store = new XataVectorSearch(embeddings, { client, table });
+
+// Add documents
+const docs = [
+  new Document({
+    pageContent: "Xata is a Serverless Data platform based on PostgreSQL",
+  }),
+  new Document({
+    pageContent:
+      "Xata offers a built-in vector type that can be used to store and query vectors",
+  }),
+  new Document({
+    pageContent: "Xata includes similarity search",
+  }),
+];
+
+const ids = await store.addDocuments(docs);
+
+// eslint-disable-next-line no-promise-executor-return
+await new Promise((r) => setTimeout(r, 2000));
+
+const model = new OpenAI();
+const chain = VectorDBQAChain.fromLLM(model, store, {
+  k: 1,
+  returnSourceDocuments: true,
 });
+const response = await chain.call({ query: "What is Xata?" });
 
-const res = await model.call(
-  "What's a good idea for an application to build with GPT-3?"
-);
+console.log(JSON.stringify(response, null, 2));
 
-console.log(res);
+// await store.delete({ ids });

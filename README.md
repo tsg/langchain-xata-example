@@ -1,22 +1,16 @@
-# langchain-ts-starter
+# Langchain.js with Xata example
 
-Boilerplate to get started quickly with the [Langchain Typescript SDK](https://github.com/hwchase17/langchainjs).
-
-This uses the same tsconfig and build setup as the [examples repo](https://github.com/hwchase17/langchainjs/tree/main/examples), to ensure it's in sync with the official docs.
-
-# What's included
-
-- Typescript
-- .env file configuration
-- ESLint and Prettier for formatting
-- Turborepo to quickly run build scripts
-- `tsup` to bundle Typescript code
-- `tsx` to quickly run compiled code
+Boilerplate to get started quickly with the [Langchain Typescript SDK](https://github.com/hwchase17/langchainjs) and [Xata](https://xata.io), based on https://github.com/domeccleston/langchain-ts-starter. 
 
 # How to use
 
 - Clone this repository
 - `npm install`
-- Write your code in `src`
-- `npx turbo run build lint format` to run build scripts quickly in parallel
-- `npm start` to run your program
+- Sign up to [Xata.io](https://app.xata.io)
+- Create a Xata DB and initialize the repo for it like this:
+```sh
+ xata init --schema=schema.json --codegen=src/xata.ts
+```
+- Add the `OPENAI_API_KEY` env to `.env`
+- Run the example with `npm start`
+- Modify the code in `src/index.ts`
