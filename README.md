@@ -7,7 +7,7 @@ Boilerplate to get started quickly with the [Langchain Typescript SDK](https://g
 - Clone this repository
 - `npm install`
 - Sign up to [Xata.io](https://app.xata.io)
-- Create a Xata DB and initialize the repo for it like this:
+- Create a Xata DB and initialize the repo to use it with this command:
 ```sh
  xata init --schema=schema.json --codegen=src/xata.ts
 ```
